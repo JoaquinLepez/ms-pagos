@@ -1,0 +1,16 @@
+@startuml Pagos - Diagrama de clases
+
+class Model {
+ clase de SQLAlchemy
+}
+
+class Pago {
+    - id: int
+    - producto_id: int
+    - precio: float
+    - medio_pago: string
+}
+
+Model <|-- Pago
+
+@enduml
