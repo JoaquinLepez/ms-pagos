@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from marshmallow import ValidationError
 from .services import PagoService, ResponseBuilder
 from .mapping import PagoSchema, ResponseSchema
 
@@ -18,10 +19,15 @@ def index():
 @pago.route('/pagos', methods=['POST'])
 def add():
     response_builder = ResponseBuilder()
-    pago = pago_schema.load(request.json)
-    data = pago_schema.dump(pago_service.save(pago))
-    response_builder.add_message("Pago added").add_status_code(201).add_data(data)
-    return response_schema.dump(response_builder.build()), 201
+    try:
+        pago = pago_schema.load(request.json)
+        data = pago_schema.dump(pago_service.save(pago))
+        response_builder.add_message("Pago added").add_status_code(201).add_data(data)
+        return response_schema.dump(response_builder.build()), 201
+    except ValidationError as err:
+        response_builder.add_message("Validation error").add_status_code(422).add_data(err.messages)
+        return response_schema.dump(response_builder.build()), 422
+
 
 @pago.route('/pagos/<int:id>', methods=['DELETE'])
 def delete(id):
