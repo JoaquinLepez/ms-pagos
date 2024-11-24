@@ -1,15 +1,22 @@
 from ..repository import PagoRepository
 from app.models import Pago
+from app import cache
 
 repository = PagoRepository()
 
 class PagoService:
 
     def all(self) -> list[Pago]:
-        return repository.all()
+        result = cache.get('pagos')
+        if result is None:
+            result = repository.all()
+            cache.set('pagos', result, timeout=15)
+        return result
 
-    def save(self, pago: Pago) -> Pago:
-        return repository.save(pago)
+    def add(self, pago: Pago) -> Pago:
+        pago = repository.add(pago)
+        cache.set(f'pago_{pago.id}', pago, timeout=15)
+        return pago
     
     def delete(self, id: int) -> bool:
         pago = self.find(id)

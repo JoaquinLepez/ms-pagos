@@ -10,7 +10,7 @@ pago_schema = PagoSchema()
 pago = Blueprint('pago', __name__)
 
 @pago.route('/pagos', methods=['GET'])
-def index():
+def get_all():
     response_builder = ResponseBuilder()
     data = pago_schema.dump(pago_service.all(), many=True)
     response_builder.add_message("Pagos found").add_status_code(200).add_data(data)
@@ -21,7 +21,7 @@ def add():
     response_builder = ResponseBuilder()
     try:
         pago = pago_schema.load(request.json)
-        data = pago_schema.dump(pago_service.save(pago))
+        data = pago_schema.dump(pago_service.add(pago))
         response_builder.add_message("Pago added").add_status_code(201).add_data(data)
         return response_schema.dump(response_builder.build()), 201
     except ValidationError as err:

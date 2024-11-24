@@ -6,7 +6,7 @@ class PagoRepository:
     def all(self) -> List[Pago]:
         return db.session.query(Pago).all()
     
-    def save(self, pago: Pago) -> Pago:
+    def add(self, pago: Pago) -> Pago:
         db.session.add(pago)
         db.session.commit()
         return pago
