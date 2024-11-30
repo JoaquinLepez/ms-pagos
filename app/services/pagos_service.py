@@ -21,6 +21,7 @@ class PagoService:
     def delete(self, id: int) -> bool:
         pago = self.find(id)
         if pago:
+            cache.delete(f'pago_{id}')
             repository.delete(pago)
             return True
         else:

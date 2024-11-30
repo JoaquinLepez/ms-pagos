@@ -41,6 +41,16 @@ class RedisTestCase(unittest.TestCase):
         self.assertEqual(cached_pago.producto_id, pago1.producto_id)
         self.assertEqual(cached_pago.precio, pago1.precio)
         self.assertEqual(cached_pago.medio_pago, pago1.medio_pago)
+    
+    def test_cache_after_deleting_pago(self):
+        pago = Pago(producto_id=1, precio=100, medio_pago='efectivo')
+        pago1 = service.add(pago)
+        cached_pago = cache.get(f'pago_{pago1.id}')
+        self.assertIsNotNone(cached_pago) 
+
+        service.delete(pago1.id)
+        cached_pago = cache.get(f'pago_{pago1.id}')
+        self.assertIsNone(cached_pago)
 
 if __name__ == '__main__':
     unittest.main()
