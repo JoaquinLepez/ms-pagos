@@ -2,12 +2,18 @@ from flask import Blueprint, request
 from marshmallow import ValidationError
 from .services import PagoService, ResponseBuilder
 from .mapping import PagoSchema, ResponseSchema
+from app import db
 
 response_schema = ResponseSchema()
 pago_service = PagoService()
 pago_schema = PagoSchema()
 
 pago = Blueprint('pago', __name__)
+
+@pago.route('/', methods=['GET'])
+def index():
+    db.create_all()
+    return 'hola mundo', 200
 
 @pago.route('/pagos', methods=['GET'])
 def get_all():
